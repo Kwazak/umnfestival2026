@@ -80,7 +80,6 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::get('/archive', [App\Http\Controllers\AdminController::class, 'archive'])->name('admin.archive');
     Route::get('/closing-section', [App\Http\Controllers\AdminController::class, 'closingSection'])->name('admin.closing-section');
     Route::get('/hero-section', [App\Http\Controllers\AdminController::class, 'heroSection'])->name('admin.hero-section');
-    Route::get('/divisions', [App\Http\Controllers\AdminController::class, 'divisions'])->name('admin.divisions');
     Route::get('/event-pages', [App\Http\Controllers\AdminController::class, 'eventPages'])->name('admin.event-pages');
     Route::get('/scanner', [App\Http\Controllers\AdminController::class, 'scanner'])->name('admin.scanner');
     Route::get('/spin', [App\Http\Controllers\AdminController::class, 'spin'])->name('admin.spin');

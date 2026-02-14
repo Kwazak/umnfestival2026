@@ -110,8 +110,8 @@ Route::get('/orders/current-price', [App\Http\Controllers\API\OrderController::c
 Route::post('/payment/notification', [PaymentController::class, 'notification'])->middleware('throttle:60,1');
 
 // Order and payment routes for ticket purchase (uses temporary token) - WITH PURE LARAVEL SYNC
-// NO THROTTLE - Users can create as many orders as they want without "Too Many Attempts" errors
-Route::middleware(['temp.auth', 'pure.sync'])->group(function () {
+// Rate limited to prevent abuse while allowing reasonable order creation
+Route::middleware(['temp.auth', 'pure.sync', 'throttle:10,1'])->group(function () {
     Route::post('/orders', [OrderController::class, 'create']);
     Route::get('/payment/{orderNumber}/create', [PaymentController::class, 'createPayment']);
     Route::post('/payment/{orderNumber}/verify', [PaymentController::class, 'verifyPayment']);
@@ -145,8 +145,8 @@ Route::middleware(['web','admin.api.auth'])->group(function () {
 Route::get('/payment/{orderNumber}/status', [PaymentController::class, 'checkStatus'])->middleware(['pure.sync']);
 
 // Sync routes for real-time Midtrans integration - WITH PURE LARAVEL SYNC
-// NO THROTTLE - Allow unlimited syncing for better payment status accuracy
-Route::prefix('sync')->middleware(['pure.sync'])->group(function () {
+// Protected with admin auth for security
+Route::prefix('sync')->middleware(['web', 'admin.api.auth', 'pure.sync'])->group(function () {
     // Manual sync specific order
     Route::post('/order/{orderNumber}', [App\Http\Controllers\API\SyncController::class, 'syncOrder']);
     
@@ -198,6 +198,7 @@ Route::prefix('sync')->middleware(['pure.sync'])->group(function () {
     });
     
     // AUTO TRIGGER - For external services like UptimeRobot to trigger sync
+    // Protected: requires admin auth to prevent abuse
     Route::get('/auto-trigger', function() {
         try {
             \Log::info('🤖 AUTO TRIGGER: External sync triggered');

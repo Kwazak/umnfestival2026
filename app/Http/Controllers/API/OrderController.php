@@ -25,16 +25,17 @@ class OrderController extends Controller
     public function create(Request $request)
     {
         try {
-            // Email / phone boleh dipakai lagi kalau order sebelumnya statusnya 'expire'
+            // Email / phone boleh dipakai lagi kalau order sebelumnya statusnya expired atau failed
+            $failedStatuses = ['expire', 'deny', 'cancel', 'failure', 'cancelled', 'failed'];
             $request->validate([
                 'buyer_name' => 'required|string|max:255',
                 'buyer_email' => [
                     'required','email','max:255',
-                    Rule::unique('orders','buyer_email')->where(fn($q)=>$q->where('status','!=','expire'))
+                    Rule::unique('orders','buyer_email')->where(fn($q)=>$q->whereNotIn('status', $failedStatuses))
                 ],
                 'buyer_phone' => [
                     'required','string','max:20',
-                    Rule::unique('orders','buyer_phone')->where(fn($q)=>$q->where('status','!=','expire'))
+                    Rule::unique('orders','buyer_phone')->where(fn($q)=>$q->whereNotIn('status', $failedStatuses))
                 ],
                 'quantity' => 'required|integer|min:1|max:10',
                 'referral_code' => 'nullable|string|exists:referral_codes,code',
