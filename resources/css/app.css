@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@import "./AdminLayout.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        font-family: "LTMuseum", sans-serif;
+        /* scroll-behavior: smooth; */
+    }
+    body {
+        overflow-x: hidden;
+    }
+    .CountdownNumber {
+        font-family: "Timed", serif;
+    }
+}
+
+@layer components {
+}
+
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+
+/* resources/css/app.css */
+.bg-ufes-red {
+  background-color: #B42129;
+}
+
+/* Timed */
+@font-face {
+    font-family: "Timed";
+    src: url("../fonts/timed.ttf") format("truetype");
+    font-weight: 100;
+}
+/* LTMuseum Light (300) */
+@font-face {
+    font-family: "LTMuseum";
+    src: url("../fonts/LTMuseum-Light.ttf") format("truetype");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+/* LTMuseum Light Italic (300 italic) */
+@font-face {
+    font-family: "LTMuseum";
+    src: url("../fonts/LTMuseum-LightItalic.ttf") format("truetype");
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+/* LTMuseum Medium (500) */
+@font-face {
+    font-family: "LTMuseum";
+    src: url("../fonts/LTMuseum-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+/* LTMuseum Medium Italic (500 italic) */
+@font-face {
+    font-family: "LTMuseum";
+    src: url("../fonts/LTMuseum-MediumItalic.ttf") format("truetype");
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+/* LTMuseum Bold (700) */
+@font-face {
+    font-family: "LTMuseum";
+    src: url("../fonts/LTMuseum-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+/* LTMuseum Bold Italic (700 italic) */
+@font-face {
+    font-family: "LTMuseum";
+    src: url("../fonts/LTMuseum-BoldItalic.ttf") format("truetype");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+/* LTMuseum Black (900) */
+@font-face {
+    font-family: "LTMuseum";
+    src: url("../fonts/LTMuseum-Black.ttf") format("truetype");
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+/* LTMuseum Black Italic (900 italic) */
+@font-face {
+    font-family: "LTMuseum";
+    src: url("../fonts/LTMuseum-BlackItalic.ttf") format("truetype");
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@keyframes popInSmooth {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px); /* Mulai dari bawah & lebih kecil */
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0); /* Selesai di posisi normal */
+  }
+}
+
+.item-animate-pop-in {
+  /* Menerapkan animasi baru */
+  animation: popInSmooth 0.4s ease-out forwards;
+}
