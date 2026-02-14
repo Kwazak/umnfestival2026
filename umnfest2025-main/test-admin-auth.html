@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Admin Auth</title>
+</head>
+<body>
+    <h1>Test Admin Authentication</h1>
+    
+    <button onclick="testCategories()">Test Categories API</button>
+    <button onclick="testKnowledge()">Test Knowledge API</button>
+    
+    <div id="result"></div>
+
+    <script>
+        async function testCategories() {
+            try {
+                const response = await fetch('/api/admin/chatbot/categories', {
+                    method: 'GET',
+                    credentials: 'include', // Important for session cookies
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+
+        async function testKnowledge() {
+            try {
+                const response = await fetch('/api/admin/chatbot/knowledge', {
+                    method: 'GET',
+                    credentials: 'include', // Important for session cookies
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

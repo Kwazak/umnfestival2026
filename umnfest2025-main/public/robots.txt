@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Block sensitive or low-value paths
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /cart
+Disallow: /checkout
+
+# Crawl-delay (uncomment if server strain occurs)
+# Crawl-delay: 5
+
+# Sitemap reference
+Sitemap: https://umnfestival.com/sitemap.xml
