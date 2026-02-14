@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button, MiniButton, HeadText, Text } from "../../Components";
 import line from "../../../images/line.png";
 import unveilingCard from "../../../images/unveilingcard.png";
@@ -8,11 +10,19 @@ import lockedCard from "../../../images/lockedcard.png";
 import titleEvents from "../../../images/umnfestevents.png";
 import pohonEvents from "../../../images/pohonEventCard.png";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function EventCardSection() {
     const [flippedCards, setFlippedCards] = useState({});
     const [cardData, setCardData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    
+    // GSAP refs
+    const sectionRef = useRef(null);
+    const titleRef = useRef(null);
+    const cardsContainerRef = useRef(null);
+    const pohonRef = useRef(null);
 
     // Fetch events from API
     const fetchEvents = async () => {
@@ -69,6 +79,91 @@ export default function EventCardSection() {
     useEffect(() => {
         fetchEvents();
     }, []);
+
+    // GSAP Scroll Animations
+    useEffect(() => {
+        if (loading || !sectionRef.current) return;
+
+        const ctx = gsap.context(() => {
+            // Title animation
+            gsap.fromTo(
+                titleRef.current,
+                { opacity: 0, y: 50, scale: 0.95 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: titleRef.current,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+
+            // Cards stagger animation
+            const cards = cardsContainerRef.current?.querySelectorAll('.event-card');
+            if (cards && cards.length > 0) {
+                gsap.fromTo(
+                    cards,
+                    { opacity: 0, y: 60, scale: 0.9 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        duration: 0.8,
+                        stagger: 0.15,
+                        ease: 'back.out(1.4)',
+                        scrollTrigger: {
+                            trigger: cardsContainerRef.current,
+                            start: 'top 75%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    }
+                );
+
+                // Add hover animations to cards
+                cards.forEach(card => {
+                    card.addEventListener('mouseenter', () => {
+                        gsap.to(card, { 
+                            scale: 1.05, 
+                            y: -10, 
+                            duration: 0.3, 
+                            ease: 'power2.out',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+                        });
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        gsap.to(card, { 
+                            scale: 1, 
+                            y: 0, 
+                            duration: 0.3, 
+                            ease: 'power2.out',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                        });
+                    });
+                });
+            }
+
+            // Pohon parallax animation
+            if (pohonRef.current) {
+                gsap.to(pohonRef.current, {
+                    y: -30,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: pohonRef.current,
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 1
+                    }
+                });
+            }
+        }, sectionRef);
+
+        return () => ctx.revert();
+    }, [loading, cardData]);
 
     const handleCardClick = (cardId, className) => {
         setFlippedCards((prev) => ({
@@ -189,9 +284,9 @@ export default function EventCardSection() {
     }
 
     return (
-        <section className="pt-12 md:pt-16">
+        <section ref={sectionRef} className="pt-12 md:pt-16">
             {/* Banner */}
-            <div className="flex justify-center sm:mb-16 md:mb-20 lg:mb-24" id="judul">
+            <div ref={titleRef} className="flex justify-center sm:mb-16 md:mb-20 lg:mb-24" id="judul" style={{ opacity: 0 }}>
                 <img
                     src={titleEvents}
                     alt="Title Events"
@@ -200,13 +295,13 @@ export default function EventCardSection() {
             </div>
 
             {/* Card */}
-            <div className="max-w-7xl mx-auto">
+            <div ref={cardsContainerRef} className="max-w-7xl mx-auto">
                 {/* Display */}
                 <div className="hidden lg:flex lg:justify-center lg:gap-[65px] pb-10 mt-40 lg:mt-0">
                     {cardData.slice(0, 3).map((card) => (
                         <div
                             key={card.id}
-                            className="relative cursor-pointer transition-all duration-300 ease-in-out"
+                            className="event-card relative cursor-pointer"
                             onClick={() =>
                                 handleCardClick(card.id, card.className)
                             }
@@ -214,6 +309,7 @@ export default function EventCardSection() {
                                 aspectRatio: "3/4",
                                 width: "calc((100% - 130px) / 3)",
                                 maxWidth: "300px",
+                                opacity: 0
                             }}
                         >
                             <div
@@ -253,7 +349,7 @@ export default function EventCardSection() {
                     {cardData.slice(3, 5).map((card) => (
                         <div
                             key={card.id}
-                            className="relative cursor-pointer transition-all duration-300 ease-in-out"
+                            className="event-card relative cursor-pointer"
                             onClick={() =>
                                 handleCardClick(card.id, card.className)
                             }
@@ -261,6 +357,7 @@ export default function EventCardSection() {
                                 aspectRatio: "3/4",
                                 width: "calc((100% - 65px) / 2)",
                                 maxWidth: "300px",
+                                opacity: 0
                             }}
                         >
                             <div
@@ -297,13 +394,13 @@ export default function EventCardSection() {
 
                 {/* Responsive */}
                 <div className="block lg:hidden space-y-3 mx-2 md:mx-20">
-                    {cardData.slice(0, 5).map((card) => (
+                    {cardData.slice(0, 5).map((card, index) => (
                         <div
                             key={card.id}
                             className={`
-                                flex w-full rounded-2xl drop-shadow-md overflow-hidden
+                                event-card flex w-full rounded-2xl drop-shadow-md overflow-hidden
                                 ${card.locked ? "bg-gray-200" : "bg-white"}`}
-                            style={{ height: "100%" }}
+                            style={{ height: "100%", opacity: 0 }}
                         >
                             {/* Image */}
                             <div
@@ -387,7 +484,7 @@ export default function EventCardSection() {
             </div>
 
             {/* Pohon Image */}
-            <div>
+            <div ref={pohonRef}>
                 <img
                     src={pohonEvents}
                     alt="Pohon Events"
